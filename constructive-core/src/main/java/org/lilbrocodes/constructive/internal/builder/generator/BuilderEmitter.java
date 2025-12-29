@@ -170,7 +170,7 @@ public final class BuilderEmitter {
 
         model.fields().stream()
                 .filter(field -> !field.hardRequire() && field.hasDefault() && field.required() && !field.transientField() && field.isNullable())
-                .forEach(field -> sb.append("        if (this.").append(field.name()).append(" == null) {\n")
+                .forEach(field -> sb.append("        if (this.").append(field.name()).append(" == null").append(field.nullCheck() == null ? "" : " || " + field.nullCheck()).append(") {\n")
                         .append("            this.").append(field.name()).append(" = ")
                         .append(DefaultResolver.resolve(imports, field, model.className(), model.builderPackage())).append(";\n")
                         .append("        }\n\n"));

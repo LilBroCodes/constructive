@@ -17,6 +17,7 @@ public record FieldModel(
     String description,
     String defaultMethod,
     String defaultValueExpr,
+    String nullCheck,
     TypeModel.Declared builderType,
     Map<String, TypeModel> hardRequired
 ) {

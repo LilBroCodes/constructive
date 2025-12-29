@@ -1,6 +1,7 @@
 package org.lilbrocodes.constructor;
 
 import org.lilbrocodes.constructive.api.v1.anno.Constructive;
+import org.lilbrocodes.constructive.api.v1.anno.Target;
 import org.lilbrocodes.constructive.api.v1.anno.builder.*;
 
 /**
@@ -9,8 +10,14 @@ import org.lilbrocodes.constructive.api.v1.anno.builder.*;
 @Constructive(builder = true)
 @Target(builder = "CustomPersonBuilder", builderPackage = "org.lilbrocodes.constructor.builder")
 public class Person {
+    @Default
+    @Description("The full legal name for the person")
+    @Name(name = "name")
+    @NullCheck(check = "%f.isBlank()")
+    private String fullLegalName = "Anonymous";
+
     @Required
-    @Description("The unique identifier for a person")
+    @Description("The unique identifier for the person")
     private final String id;
 
     @Required(required = false)
@@ -36,7 +43,8 @@ public class Person {
     @Builder
     private final java.util.List<String> tags;
 
-    public Person(String id, String nickname, int age, String country, Address address, String email, java.util.List<String> tags) {
+    public Person(String name, String id, String nickname, int age, String country, Address address, String email, java.util.List<String> tags) {
+        this.fullLegalName = name;
         this.id = id;
         this.nickname = nickname;
         this.age = age;
@@ -54,13 +62,13 @@ public class Person {
     @Target(builder = "CustomAddressBuilder")
     public static class Address {
         @HardRequire
-        private String street;
+        private final String street;
 
         @HardRequire
-        private String city;
+        private final String city;
 
         @Required(required = false)
-        private String zipCode;
+        private final String zipCode;
 
         @Builder
         private java.util.List<String> residents;

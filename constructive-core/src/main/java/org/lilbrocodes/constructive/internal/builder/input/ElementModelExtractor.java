@@ -5,6 +5,7 @@ import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import org.jetbrains.annotations.ApiStatus;
 import org.lilbrocodes.constructive.api.v1.anno.Constructive;
+import org.lilbrocodes.constructive.api.v1.anno.Target;
 import org.lilbrocodes.constructive.api.v1.anno.builder.*;
 import org.lilbrocodes.constructive.internal.builder.model.ConstructiveClass;
 import org.lilbrocodes.constructive.internal.builder.model.FieldModel;
@@ -75,6 +76,13 @@ public class ElementModelExtractor {
 
             boolean hardRequire = variable.getAnnotation(HardRequire.class) != null;
             HardRequire hrAnno = variable.getAnnotation(HardRequire.class);
+
+            Name nameAnno = variable.getAnnotation(Name.class);
+            if (nameAnno != null && !nameAnno.name().isBlank()) name = nameAnno.name();
+
+            String nullCheck = null;
+            NullCheck nullCheckAnno = variable.getAnnotation(NullCheck.class);
+            if (nullCheckAnno != null && !nullCheckAnno.check().isBlank()) nullCheck = nullCheckAnno.check().replace("%f", name);
 
             boolean required = true; // default
             Required requiredAnno = variable.getAnnotation(Required.class);
@@ -162,6 +170,7 @@ public class ElementModelExtractor {
                     description,
                     defaultMethod,
                     defaultValueExpr,
+                    nullCheck,
                     builderType,
                     hardRequired
             ));

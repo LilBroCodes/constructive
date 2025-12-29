@@ -1,4 +1,4 @@
-package org.lilbrocodes.constructive.api.v1.anno.builder;
+package org.lilbrocodes.constructive.api.v1.anno;
 
 import java.lang.annotation.*;
 

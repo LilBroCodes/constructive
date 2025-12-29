@@ -1,6 +1,7 @@
 package org.lilbrocodes.constructive.api.v1.anno;
 
 import java.lang.annotation.*;
+import java.lang.annotation.Target;
 
 /**
  * Marks a class to be processed by Constructive.
