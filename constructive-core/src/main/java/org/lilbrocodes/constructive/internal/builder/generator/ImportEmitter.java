@@ -6,19 +6,12 @@ import org.lilbrocodes.constructive.internal.builder.model.FieldModel;
 import org.lilbrocodes.constructive.internal.builder.model.ImportModel;
 import org.lilbrocodes.constructive.internal.builder.model.TypeModel;
 
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.ArrayType;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static org.lilbrocodes.constructive.internal.builder.input.ElementModelExtractor.getPackageName;
 
 @ApiStatus.Internal
 public class ImportEmitter {
@@ -28,7 +21,7 @@ public class ImportEmitter {
         }
 
         if (!(type instanceof TypeModel.Declared declared)) {
-            if (type == null) return "SEX";
+            if (type == null) throw new IllegalStateException();
             return type.kind().name().toLowerCase(Locale.ROOT);
         }
 
@@ -36,15 +29,16 @@ public class ImportEmitter {
             return declared.simple();
         }
 
-        if (model.builderPackage().equals(model.packageName())) {
+        String typePkg = declared.qualified().substring(0, declared.qualified().lastIndexOf('.'));
+        if (typePkg.equals(model.builderPackage())) {
             return declared.simple();
         }
 
         imports.add(new ImportModel(declared.qualified()));
 
         if (!declared.generics().isEmpty() && includeGenerics) {
-            String generics = declared.generics().stream().
-                    map(arg -> resolveType(imports, model, arg))
+            String generics = declared.generics().stream()
+                    .map(arg -> resolveType(imports, model, arg))
                     .collect(Collectors.joining(", "));
             return declared.simple() + "<" + generics + ">";
         }
@@ -91,7 +85,7 @@ public class ImportEmitter {
         }
 
         if (field.composite()) {
-            return resolveType(imports, model,  field.builderType(), includeGenerics);
+            return resolveType(imports, model, field.builderType(), includeGenerics);
         }
 
         if (type instanceof TypeModel.Primitive primitive) {
@@ -111,7 +105,9 @@ public class ImportEmitter {
     }
 
     public static String resolveBuilder(Collection<ImportModel> imports, ConstructiveClass model) {
-        if (!model.builderPackage().equals(model.packageName())) imports.add(new ImportModel(model.packageName() + "." + model.className()));
+        if (!model.builderPackage().equals(model.packageName())) {
+            imports.add(new ImportModel(model.packageName() + "." + model.className()));
+        }
         return model.className();
     }
 

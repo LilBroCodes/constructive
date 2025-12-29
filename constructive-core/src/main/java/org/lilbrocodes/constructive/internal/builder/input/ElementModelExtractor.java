@@ -186,11 +186,13 @@ public class ElementModelExtractor {
             TypeElement typeElement = (TypeElement) declared.asElement();
 
             String pkg = getPackageName(typeElement);
-            String nestedName = getQualifiedClassName(typeElement);
+            String simpleName = typeElement.getSimpleName().toString();
+
+            String qualifiedName = typeElement.getQualifiedName().toString();
 
             typeModel = new TypeModel.Declared(
-                    pkg.isEmpty() ? nestedName : pkg + "." + nestedName,
-                    nestedName,
+                    qualifiedName,
+                    simpleName,
                     declared.getTypeArguments().stream().map(ElementModelExtractor::model).toList(),
                     TypeModel.Kind.map(declared.getKind())
             );
