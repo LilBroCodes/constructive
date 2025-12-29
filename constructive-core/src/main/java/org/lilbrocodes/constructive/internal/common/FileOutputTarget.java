@@ -1,9 +1,13 @@
 package org.lilbrocodes.constructive.internal.common;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@ApiStatus.Internal
+@SuppressWarnings("ClassCanBeRecord")
 public class FileOutputTarget implements OutputTarget {
     private final File root;
 

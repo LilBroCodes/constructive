@@ -1,10 +1,14 @@
 package org.lilbrocodes.constructive.internal.common;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
 
+@ApiStatus.Internal
+@SuppressWarnings("ClassCanBeRecord")
 public final class FilerOutputTarget implements OutputTarget {
     private final Filer filer;
 

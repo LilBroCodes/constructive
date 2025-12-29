@@ -1,5 +1,6 @@
 package org.lilbrocodes.constructive.internal.builder.generator;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.lilbrocodes.constructive.internal.builder.model.ConstructiveClass;
 import org.lilbrocodes.constructive.internal.builder.model.FieldModel;
 import org.lilbrocodes.constructive.internal.builder.model.ImportModel;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static org.lilbrocodes.constructive.internal.builder.input.ElementModelExtractor.getPackageName;
 
+@ApiStatus.Internal
 public class ImportEmitter {
     public static String resolveType(Collection<ImportModel> imports, ConstructiveClass model, TypeModel type, boolean includeGenerics) {
         if (type instanceof TypeModel.Primitive primitive) {

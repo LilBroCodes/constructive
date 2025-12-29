@@ -1,8 +1,11 @@
 package org.lilbrocodes.constructive.internal.builder.model;
 
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.Map;
 
+@ApiStatus.Internal
 public record FieldModel(
     String name,
     TypeModel type,

@@ -3,6 +3,7 @@ package org.lilbrocodes.constructive.internal.builder.input;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
+import org.jetbrains.annotations.ApiStatus;
 import org.lilbrocodes.constructive.api.v1.anno.Constructive;
 import org.lilbrocodes.constructive.api.v1.anno.builder.*;
 import org.lilbrocodes.constructive.internal.builder.model.ConstructiveClass;
@@ -23,6 +24,7 @@ import javax.lang.model.util.Types;
 import java.util.*;
 import java.util.logging.Logger;
 
+@ApiStatus.Internal
 public class ElementModelExtractor {
     private static final Logger logger = Logger.getLogger("Constructive");
 

@@ -1,8 +1,11 @@
 package org.lilbrocodes.constructive.internal.builder.model;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import javax.lang.model.type.TypeKind;
 import java.util.List;
 
+@ApiStatus.Internal
 public sealed interface TypeModel {
     record Primitive(String name, Kind kind) implements TypeModel {
         @Override

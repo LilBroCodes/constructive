@@ -1,11 +1,13 @@
 package org.lilbrocodes.constructive.internal.builder.generator;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.lilbrocodes.constructive.internal.builder.model.FieldModel;
 import org.lilbrocodes.constructive.internal.builder.model.ImportModel;
 import org.lilbrocodes.constructive.internal.builder.model.TypeModel;
 
 import java.util.Collection;
 
+@ApiStatus.Internal
 public final class DefaultResolver {
     private DefaultResolver() {}
 
