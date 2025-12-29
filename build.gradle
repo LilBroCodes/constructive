@@ -1,0 +1,121 @@
+plugins {
+    id 'java'
+}
+
+def baseVersion = property("version").toString()
+def hotfix = findProperty("hotfix")?.toString()
+
+def computedVersion = hotfix ? "${baseVersion}+${hotfix}" : baseVersion
+def archiveVersionSuffix = hotfix ? "${baseVersion}+hotfix-${hotfix}" : baseVersion
+
+
+allprojects {
+    group = property("group")
+    version = computedVersion
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: "java-library"
+    apply plugin: "maven-publish"
+
+    if (project.name.endsWith("-tests") || project.name.endsWith("-plugin")) {
+        tasks.withType(PublishToMavenRepository).configureEach {
+            enabled = false
+        }
+        tasks.withType(PublishToMavenLocal).configureEach {
+            enabled = false
+        }
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
+    }
+
+    dependencies {
+        testImplementation platform("org.junit:junit-bom:$junit_version")
+        testImplementation "org.junit.jupiter:junit-jupiter"
+        testImplementation "org.mockito:mockito-core:$mockito_version"
+        testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    tasks.withType(Javadoc).configureEach {
+        options.quiet()
+    }
+
+    tasks.withType(AbstractArchiveTask).configureEach {
+        archiveBaseName.set(project.findProperty("archives_base_name")?.toString() ?: project.name)
+        archiveVersion.set(archiveVersionSuffix)
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                groupId = project.group
+                artifactId = project.name
+                version = project.version
+            }
+        }
+
+        repositories {
+            maven {
+                name = "cloudsmith"
+                url = uri("https://maven.cloudsmith.io/lilbrocodes/constructive/")
+
+                credentials {
+                    username = System.getenv("CLOUDSMITH_USERNAME")
+                    password = System.getenv("CLOUDSMITH_API_KEY")
+                }
+            }
+            mavenLocal()
+        }
+    }
+}
+
+def artifactsDir = layout.projectDirectory.dir("artifacts")
+tasks.register("buildAndCollect") {
+    group = "build"
+
+    doFirst {
+        delete artifactsDir
+        mkdir artifactsDir
+    }
+
+    dependsOn subprojects
+            .findAll { !it.name.endsWith("-tests") }
+            .collect { it.tasks.named("jar") }
+
+    doLast {
+        subprojects
+                .findAll { !it.name.endsWith("-tests") }
+                .each { proj ->
+                    proj.tasks.withType(Jar).matching { it.name == "jar" }.each { jarTask ->
+                        copy {
+                            from jarTask.archiveFile
+                            into artifactsDir
+                        }
+                    }
+                }
+    }
+}

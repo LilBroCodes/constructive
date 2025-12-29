@@ -1,0 +1,34 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'java'
+}
+
+dependencies {
+    api project(":constructive-core")
+
+    implementation gradleApi()
+    implementation localGroovy()
+
+    testImplementation gradleTestKit()
+    testImplementation platform("org.junit:junit-bom:$junit_version")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    systemProperty "gradle.plugin.testkit.classpath", project.buildDir.absolutePath + "/classes/java/main"
+}
+
+test {
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+}
+
+gradlePlugin {
+    plugins {
+        constructive {
+            id = "org.lilbrocodes.constructive.gradle"
+            implementationClass = "org.lilbrocodes.constructive.ConstructiveGradlePlugin"
+        }
+    }
+}

@@ -1,0 +1,8 @@
+rootProject.name = "constructive"
+
+include(
+    "constructive-core",
+    "constructive-processor",
+    "constructive-plugin",
+    "constructive-tests"
+)
