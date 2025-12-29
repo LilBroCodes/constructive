@@ -45,6 +45,8 @@ subprojects {
     }
 
     dependencies {
+        compileOnly "org.jetbrains:annotations:24.1.0"
+
         testImplementation platform("org.junit:junit-bom:$junit_version")
         testImplementation "org.junit.jupiter:junit-jupiter"
         testImplementation "org.mockito:mockito-core:$mockito_version"
