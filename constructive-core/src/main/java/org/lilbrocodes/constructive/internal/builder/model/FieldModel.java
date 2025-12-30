@@ -19,7 +19,8 @@ public record FieldModel(
     String defaultValueExpr,
     String nullCheck,
     TypeModel.Declared builderType,
-    Map<String, TypeModel> hardRequired
+    Map<String, TypeModel> hardRequired,
+    ImportModel optionalImport
 ) {
     public boolean hasJavadoc() {
         return description != null || hardRequire || !required || defaultValueExpr != null;

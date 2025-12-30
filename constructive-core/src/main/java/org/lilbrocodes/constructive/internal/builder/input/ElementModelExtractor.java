@@ -9,6 +9,7 @@ import org.lilbrocodes.constructive.api.v1.anno.Target;
 import org.lilbrocodes.constructive.api.v1.anno.builder.*;
 import org.lilbrocodes.constructive.internal.builder.model.ConstructiveClass;
 import org.lilbrocodes.constructive.internal.builder.model.FieldModel;
+import org.lilbrocodes.constructive.internal.builder.model.ImportModel;
 import org.lilbrocodes.constructive.internal.builder.model.TypeModel;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -146,6 +147,15 @@ public class ElementModelExtractor {
             Description descriptionAnno = variable.getAnnotation(Description.class);
             String description = (descriptionAnno != null) ? descriptionAnno.value() : null;
 
+            Import importAnno = variable.getAnnotation(Import.class);
+            String importPath = null;
+            boolean staticImport = false;
+
+            if (importAnno != null && !importAnno.path().isBlank()) {
+                importPath = importAnno.path();
+                staticImport = importAnno.isStatic();
+            }
+
             String defaultValueExpr = null;
             try {
                 TreePath path = trees.getPath(variable);
@@ -172,7 +182,8 @@ public class ElementModelExtractor {
                     defaultValueExpr,
                     nullCheck,
                     builderType,
-                    hardRequired
+                    hardRequired,
+                    new ImportModel(importPath, staticImport)
             ));
         }
 

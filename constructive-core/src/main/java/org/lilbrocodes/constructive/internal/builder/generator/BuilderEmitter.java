@@ -40,7 +40,7 @@ public final class BuilderEmitter {
                 .filter(field -> !field.transientField())
                 .forEach(field -> {
                     if (field.hasJavadoc()) {
-                        sb.append("    /**\n");
+                        sb.append("\n    /**\n");
                         if (field.description() != null) sb.append("     * ").append(field.description()).append("\n");
                         if (field.hardRequire()) sb.append("     * Required at creation time.\n");
                         if (!field.required() && !field.builder()) sb.append("     * This field is optional.\n");
@@ -60,12 +60,15 @@ public final class BuilderEmitter {
                         );
                     }
 
-                    sb.append(";\n\n");
+                    sb.append(";\n");
+
+                    ImportModel opt = field.optionalImport();
+                    if (opt.qualified() != null && !opt.qualified().isBlank()) imports.add(opt);
                 });
     }
 
     public static void emitConstructor(StringBuilder sb, ConstructiveClass model) {
-        sb.append("    private ").append(model.builderName()).append("(");
+        sb.append("\n    private ").append(model.builderName()).append("(");
         if (model.needsWrapping()) sb.append("P parent");
         sb.append(") {\n");
         if (model.needsWrapping()) sb.append("        this.parent = parent;\n");
@@ -166,7 +169,7 @@ public final class BuilderEmitter {
                 .forEach(field -> sb.append("        if (this.").append(field.name()).append(" == null) {\n")
                         .append("            throw new IllegalStateException(\"Required field '")
                         .append(field.name()).append("' was not set\");\n")
-                        .append("        }\n"));
+                        .append("        }\n\n"));
 
         model.fields().stream()
                 .filter(field -> !field.hardRequire() && field.hasDefault() && field.required() && !field.transientField() && field.isNullable())
@@ -194,12 +197,12 @@ public final class BuilderEmitter {
                             : DefaultResolver.resolve(imports, field, model.className(), model.builderPackage()));
                     sb.append(";\n");
                 });
-        sb.append("\n        return this;\n    }\n\n");
+        sb.append("\n        return this;\n    }\n");
     }
 
     public static void emitEndMethod(StringBuilder sb, ConstructiveClass model) {
         if (model.needsWrapping()) {
-            sb.append("    public P end() {\n")
+            sb.append("\n    public P end() {\n")
                     .append("        if (parent == null) {\n")
                     .append("            throw new IllegalStateException(\"Cannot call end on a root builder!\");\n")
                     .append("        }\n")
